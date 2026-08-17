@@ -8,28 +8,28 @@ A retrieval-augmented generation (RAG) pipeline for customer-churn analysis, bui
 flowchart TB
     subgraph Ingestion["Document ingestion"]
         direction LR
-        Docs[/"Support tickets,\ncall transcripts,\nchurn reports"/] -->|upload| S3[("S3 Bucket\nChurnDocumentsBucket")]
-        S3 -->|ObjectCreated event| IngestFn["IngestTriggerFunction\n(Java Lambda)"]
-        IngestFn -->|StartIngestionJob| KB
+        Docs["Support tickets,<br/>call transcripts,<br/>churn reports"] -->|upload| S3[("S3 Bucket<br/>ChurnDocumentsBucket")]
+        S3 -->|"ObjectCreated event"| IngestFn["IngestTriggerFunction<br/>Java Lambda"]
+        IngestFn -->|"StartIngestionJob"| KB
     end
 
     subgraph KBCore["Bedrock Knowledge Base"]
-        KB{{"Knowledge Base\ncustomer-churn-knowledge-base"}}
-        Titan["Titan Embed Text v2\n(embedding model)"]
-        KB <--> Titan
-        KB --> OSS[("OpenSearch Serverless\nvector collection\nchurn-rag-kb")]
+        KB{{"Knowledge Base<br/>customer-churn-knowledge-base"}}
+        Titan["Titan Embed Text v2<br/>embedding model"]
+        KB --> Titan
+        KB --> OSS[("OpenSearch Serverless<br/>vector collection<br/>churn-rag-kb")]
     end
 
-    IndexFn["VectorIndexCreatorFunction\n(Python Lambda,\nCloudFormation custom resource)"] -.->|creates k-NN index\n(deploy-time only)| OSS
+    IndexFn["VectorIndexCreatorFunction<br/>Python Lambda,<br/>CloudFormation custom resource"] -.->|"creates k-NN index<br/>at deploy time"| OSS
 
     subgraph QueryFlow["Query"]
         direction LR
-        Client(["Client"]) -->|"POST /query\n{ question }"| API["HTTP API\n(API Gateway v2)"]
-        API --> QueryFn["QueryFunction\n(Java Lambda)"]
-        QueryFn -->|RetrieveAndGenerate| KB
-        KB -->|retrieved chunks| Haiku["Claude 3 Haiku\n(generation model)"]
-        Haiku -->|grounded answer| QueryFn
-        QueryFn -->|"{ answer, sessionId }"| Client
+        Client(["Client"]) -->|"POST /query"| API["HTTP API<br/>API Gateway v2"]
+        API --> QueryFn["QueryFunction<br/>Java Lambda"]
+        QueryFn -->|"RetrieveAndGenerate"| KB
+        KB -->|"retrieved chunks"| Haiku["Claude 3 Haiku<br/>generation model"]
+        Haiku -->|"grounded answer"| QueryFn
+        QueryFn -->|"answer + sessionId"| Client
     end
 ```
 
