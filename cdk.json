@@ -1,0 +1,26 @@
+{
+  "app": "./gradlew -q run",
+  "watch": {
+    "include": [
+      "src/**"
+    ],
+    "exclude": [
+      "target/**",
+      "cdk.out/**"
+    ]
+  },
+  "context": {
+    "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
+    "@aws-cdk/core:checkSecretUsage": true,
+    "@aws-cdk/core:target-partitions": [
+      "aws",
+      "aws-cn"
+    ],
+    "@aws-cdk/aws-iam:minimizePolicies": true,
+    "@aws-cdk/core:validateSnapshotRemovalPolicy": true,
+    "@aws-cdk/aws-s3:createDefaultLoggingPolicy": true,
+    "@aws-cdk/aws-apigateway:disableCloudWatchRole": false,
+    "@aws-cdk/core:enablePartitionLiterals": true,
+    "@aws-cdk/aws-lambda:recognizeVersionProps": true
+  }
+}

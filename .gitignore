@@ -1,0 +1,5 @@
+.gradle/
+build/
+cdk.out/
+*.class
+.DS_Store
